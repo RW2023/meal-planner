@@ -5,7 +5,7 @@ import './globals.css'
 
 
 export const metadata: Metadata = {
-  title: 'Meal Planner App',
+  title: 'Meal Plannerizer',
   description: 'Ai Powered Meal Planner',
 }
 

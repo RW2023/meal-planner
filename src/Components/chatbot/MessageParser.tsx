@@ -63,7 +63,7 @@ const App: React.FC = () => {
 
   return (
     <MessageParser actions={actions}>
-      <ChildComponent />
+      {/* <ChildComponent /> */}
     </MessageParser>
   );
 };

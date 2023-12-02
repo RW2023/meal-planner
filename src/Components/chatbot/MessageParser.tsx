@@ -2,33 +2,70 @@ import React from 'react';
 
 // Define the interface for the actions object
 interface Actions {
-  // Define the structure of your actions here
-  // For example:
-  // sendMessage: (message: string) => void;
-  // You can add more actions as needed
+  sendMessage: (message: string) => void;
+  // Additional actions can be defined here
+}
+
+// Define a common props type for child components of MessageParser
+interface MessageParserChildProps {
+  parse: (message: string) => void;
+  actions: Actions;
 }
 
 interface MessageParserProps {
-  children: React.ReactNode;
+  children:
+    | React.ReactElement<MessageParserChildProps>[]
+    | React.ReactElement<MessageParserChildProps>;
   actions: Actions;
 }
 
 const MessageParser: React.FC<MessageParserProps> = ({ children, actions }) => {
   const parse = (message: string) => {
-    console.log(message);
-    // You can use actions here as needed
+    console.log('Parsed message:', message);
+    actions.sendMessage(message);
   };
 
   return (
     <div>
-      {React.Children.map(children, (child) => {
-        return React.cloneElement(child as React.ReactElement, {
-          parse: parse,
-          actions: actions, // Pass the actions as is or modify as needed
-        });
-      })}
+      {React.Children.map(children, (child) =>
+        React.isValidElement(child)
+          ? React.cloneElement(child, { parse, actions })
+          : child,
+      )}
     </div>
   );
 };
 
-export default MessageParser;
+// ChildComponent now explicitly uses MessageParserChildProps
+const ChildComponent: React.FC<MessageParserChildProps> = ({
+  parse,
+  actions,
+}) => {
+  const handleClick = () => {
+    parse('Hello, world!');
+  };
+
+  return (
+    <div>
+      <button onClick={handleClick}>Send Message</button>
+    </div>
+  );
+};
+
+// Example usage of MessageParser
+const App: React.FC = () => {
+  const actions: Actions = {
+    sendMessage: (message: string) => {
+      console.log('Message sent:', message);
+    },
+    // Define other actions here
+  };
+
+  return (
+    <MessageParser actions={actions}>
+      <ChildComponent />
+    </MessageParser>
+  );
+};
+
+export default App;
